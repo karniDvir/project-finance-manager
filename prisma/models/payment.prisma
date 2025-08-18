@@ -1,0 +1,19 @@
+// // =======================
+// // Payment
+// // =======================
+// model Payment {
+//   id               String           @id @default(cuid())
+//   amount           Float
+//   date             DateTime         @default(now())
+//   receipt          String?
+
+//   // Relations
+//   beneficiaryId    String
+//   beneficiary      Beneficiary      @relation(fields: [beneficiaryId], references: [id])
+
+//   userId           String
+//   user             User             @relation(fields: [userId], references: [id])
+
+//   paymentTypeId    String
+//   paymentType      PaymentType      @relation(fields: [paymentTypeId], references: [id])
+// }

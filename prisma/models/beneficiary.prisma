@@ -1,0 +1,15 @@
+// // =======================
+// // Beneficiary
+// // =======================
+// model Beneficiary {
+//   id          String     @id @default(cuid())
+//   name        String
+//   reason      String
+//   totalAmount Float?     // planned total to be paid
+//   createdAt   DateTime   @default(now())
+
+//   // Relations
+//   userId      String
+//   user        User       @relation(fields: [userId], references: [id])
+//   payments    Payment[]
+// }

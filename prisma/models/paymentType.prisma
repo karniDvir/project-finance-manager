@@ -1,0 +1,10 @@
+// // =======================
+// // PaymentType
+// // =======================
+// model PaymentType {
+//   id       String   @id @default(cuid())
+//   method   PaymentMethod
+//   source   PaymentSource
+
+//   payments Payment[]
+// }

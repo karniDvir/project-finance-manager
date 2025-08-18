@@ -1,0 +1,11 @@
+// model LoanRepayment {
+//   id       String   @id @default(cuid())
+//   amount   Float
+//   date     DateTime @default(now())
+
+//   loanId   String
+//   loan     Loan     @relation(fields: [loanId], references: [id])
+
+//   userId   String
+//   user     User     @relation(fields: [userId], references: [id])
+// }

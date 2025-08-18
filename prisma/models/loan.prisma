@@ -1,0 +1,16 @@
+// // =======================
+// // Loan
+// // =======================
+// model Loan {
+//   id             String           @id @default(cuid())
+//   name           String
+//   amount         Float
+//   date           DateTime         @default(now())
+//   amountReturned Float            @default(0)
+
+//   // Relations
+//   userId         String
+//   user           User             @relation(fields: [userId], references: [id])
+
+//   repayments     LoanRepayment[]
+// }

@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["views"]
+
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String          @id @default(cuid())
+  name           String?
+  email          String?         @unique
+  image          String?
+
+  // App relations
+  beneficiaries  Beneficiary[]
+  payments       Payment[]
+  loans          Loan[]
+  loanRepayments LoanRepayment[]
+}
+
+model Beneficiary {
+  id          String     @id @default(cuid())
+  name        String
+  reason      String
+  totalAmount Float?
+  createdAt   DateTime   @default(now())
+
+  // Relations
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  payments    Payment[]
+}
+
+view BeneficiaryWithAmounts {
+  id          String
+  name        String
+  reason      String
+  totalAmount Float?
+  createdAt   DateTime
+  userId      String
+  amountPaid  Float
+  amountRemain Float
+
+  @@map("BeneficiaryWithAmounts") 
+}
+
+model Payment {
+  id               String           @id @default(cuid())
+  amount           Float
+  date             DateTime         @default(now())
+  receipt          String?
+
+  // Relations
+  beneficiaryId    String
+  beneficiary      Beneficiary      @relation(fields: [beneficiaryId], references: [id])
+
+  userId           String
+  user             User             @relation(fields: [userId], references: [id])
+
+  paymentTypeId    String
+  paymentType      PaymentType      @relation(fields: [paymentTypeId], references: [id])
+}
+
+model PaymentType {
+  id       String   @id @default(cuid())
+  method   PaymentMethod
+  source   PaymentSource
+
+  payments Payment[]
+}
+
+enum PaymentMethod {
+  CASH
+  TRANSACTION
+  CREDIT
+}
+
+enum PaymentSource {
+  LOAN
+  BALANCE
+}
+
+model Loan {
+  id             String           @id @default(cuid())
+  name           String           
+  amount         Float  
+  date           DateTime         @default(now())
+
+  // Relations
+  userId         String
+  user           User             @relation(fields: [userId], references: [id])
+
+  repayments     LoanRepayment[]
+  @@unique([userId, name])
+}
+
+
+view LoanWithReturned {
+  id             String
+  name           String
+  amount         Float
+  date           DateTime
+  userId         String
+  amountReturned Float
+  amountRemain   Float
+
+  @@map("LoanWithReturned")
+}
+
+model LoanRepayment {
+  id       String   @id @default(cuid())
+  amount   Float
+  date     DateTime @default(now())
+
+  // Relations
+  loanId   String
+  loan     Loan     @relation(fields: [loanId], references: [id])
+
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+}

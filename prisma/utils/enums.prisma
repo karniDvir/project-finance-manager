@@ -1,0 +1,12 @@
+// // Enums for payment-related fields
+
+// enum PaymentMethod {
+//   CASH
+//   TRANSACTION
+//   CREDIT
+// }
+
+// enum PaymentSource {
+//   LOAN
+//   BALANCE
+// }
