@@ -27,3 +27,11 @@ export const paymentSchema = z.object({
   beneficiaryId: z.string().cuid(),
   paymentTypeId: z.string().cuid(),
 });
+
+export const querySchema = z.object({
+  minAmount: z.string().transform(Number).optional(),
+  maxAmount: z.string().transform(Number).optional(),
+  name: z.string().optional(),
+  sortBy: z.enum(["date", "amount"]).default("date"),
+  sort: z.enum(["asc", "desc"]).default("desc"),
+});

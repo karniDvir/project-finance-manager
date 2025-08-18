@@ -3,8 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { catchAsync } from '@/utils/catchAsync';
 import { AppError } from '@/utils/AppError';
-import { getServerSession } from 'next-auth';
-import { getUserId } from '@/lib/getUserId';
+import { getUserId } from '@/lib/auth';
+import { loanSchema } from "@/lib/validation";
+import { createCrudHandlers } from "@/lib/curdFactory";
+
 
 // GET: /api/beneficiaries?minTotal=100&sortBy=totalAmount&sort=asc&startDate=2024-01-01&endDate=2024-12-31
 export const GET = catchAsync(async (req: NextRequest, res : NextResponse ) => {
@@ -42,7 +44,7 @@ export const GET = catchAsync(async (req: NextRequest, res : NextResponse ) => {
       [sortBy]: sort,
     },
   });
-
+  console.log(beneficiaries);
   return NextResponse.json(beneficiaries);
 });
 

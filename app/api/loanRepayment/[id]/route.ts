@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { catchAsync } from "@/utils/catchAsync";
 import { AppError } from "@/utils/AppError";
-import { getUserId } from "@/lib/getUserId";
+import { getUserId } from "@/lib/auth";
 import { idSchema } from "@/lib/validation";
 
 export const GET = catchAsync(async (_req: NextRequest, ctx) => {

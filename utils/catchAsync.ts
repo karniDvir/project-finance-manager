@@ -1,31 +1,33 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { Prisma } from '@prisma/client';
+// src/lib/catchAsync.ts
+import { NextResponse } from "next/server";
+import { ZodError } from "zod";
+import { AppError } from "./AppError";
 
-type RouteHandler = (req: NextRequest, ctx?: any) => Promise<NextResponse>;
-
-export function catchAsync(handler: RouteHandler): RouteHandler {
-  return async (req, ctx) => {
+export function catchAsync(handler: (...args: any[]) => Promise<any>) {
+  return async (...args: any[]) => {
     try {
-      return await handler(req, ctx);
+      const result = await handler(...args);
+      return NextResponse.json(result);
     } catch (err: any) {
-      console.error('API Error:', err);
-
-      let statusCode = err?.statusCode || 500;
-      let message = err?.message || 'Something went wrong';
-
-      // Prisma error handling
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2002') {
-          statusCode = 400;
-          message = `Duplicate value for field(s): ${err.meta?.target}`;
-        }
-        if (err.code === 'P2025') {
-          statusCode = 404;
-          message = 'Record not found';
-        }
+      if (err instanceof ZodError) {
+        return NextResponse.json(
+          { error: "Validation failed", details: err},
+          { status: 400 }
+        );
       }
 
-      return NextResponse.json({ status: 'error', message }, { status: statusCode });
+      if (err instanceof AppError) {
+        return NextResponse.json(
+          { error: err.message },
+          { status: err.statusCode }
+        );
+      }
+
+      console.error("Unexpected error:", err);
+      return NextResponse.json(
+        { error: "Internal server error" },
+        { status: 500 }
+      );
     }
   };
 }

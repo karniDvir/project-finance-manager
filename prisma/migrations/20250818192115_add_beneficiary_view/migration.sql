@@ -54,7 +54,6 @@ CREATE TABLE "public"."Loan" (
     "name" TEXT NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "amountReturned" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "Loan_pkey" PRIMARY KEY ("id")
@@ -73,6 +72,9 @@ CREATE TABLE "public"."LoanRepayment" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "public"."User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Loan_userId_name_key" ON "public"."Loan"("userId", "name");
 
 -- AddForeignKey
 ALTER TABLE "public"."Beneficiary" ADD CONSTRAINT "Beneficiary_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
