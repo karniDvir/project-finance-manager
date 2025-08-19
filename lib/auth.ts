@@ -1,6 +1,6 @@
+//lib/auth.ts
 import { getServerSession } from "next-auth";
-import { authOptions } from '../utils/authOptions'; // adjust path
-
+import { authOptions } from '../utils/authOptions';
 export async function getUserId() {
   const session = await getServerSession(authOptions);
 

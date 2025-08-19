@@ -1,7 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["views"]
-
 }
 
 datasource db {
@@ -10,59 +8,71 @@ datasource db {
 }
 
 model User {
-  id             String          @id @default(cuid())
+  id             String   @id @default(cuid())
   name           String?
-  email          String?         @unique
+  email          String? @unique
   image          String?
 
-  // App relations
+  projects       Project[]
   beneficiaries  Beneficiary[]
   payments       Payment[]
   loans          Loan[]
-  loanRepayments LoanRepayment[]
+}
+
+model Project {
+  id            String        @id @default(cuid())
+  name          String
+  description   String?
+  createdAt     DateTime      @default(now())
+
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+
+  beneficiaries Beneficiary[]
+  payments      Payment[]
+  loans         Loan[]
 }
 
 model Beneficiary {
   id          String     @id @default(cuid())
   name        String
-  reason      String
-  totalAmount Float?
+  reason      String?
   createdAt   DateTime   @default(now())
 
-  // Relations
   userId      String
   user        User       @relation(fields: [userId], references: [id])
+
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id])
+
   payments    Payment[]
 }
 
-view BeneficiaryWithAmounts {
-  id          String
-  name        String
-  reason      String
-  totalAmount Float?
-  createdAt   DateTime
-  userId      String
-  amountPaid  Float
-  amountRemain Float
-
-  @@map("BeneficiaryWithAmounts") 
-}
-
 model Payment {
-  id               String           @id @default(cuid())
-  amount           Float
-  date             DateTime         @default(now())
-  receipt          String?
+  id            String      @id @default(cuid())
+  amount        Float
+  kind          PaymentKind          // INCOME / EXPENSE / REPAYMENT
+  date          DateTime    @default(now()) 
+  effectiveDate DateTime?            
+  notes         String?
+  receipt       String?
 
-  // Relations
-  beneficiaryId    String
-  beneficiary      Beneficiary      @relation(fields: [beneficiaryId], references: [id])
+  beneficiaryId String?
+  beneficiary   Beneficiary? @relation(fields: [beneficiaryId], references: [id])
 
-  userId           String
-  user             User             @relation(fields: [userId], references: [id])
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
 
-  paymentTypeId    String
-  paymentType      PaymentType      @relation(fields: [paymentTypeId], references: [id])
+  projectId     String
+  project       Project    @relation(fields: [projectId], references: [id])
+
+  paymentTypeId String
+  paymentType   PaymentType @relation(fields: [paymentTypeId], references: [id])
+
+  loanId        String?    
+  loan          Loan?       @relation(fields: [loanId], references: [id])
+
+  attachments   Attachment[]
 }
 
 model PaymentType {
@@ -71,6 +81,32 @@ model PaymentType {
   source   PaymentSource
 
   payments Payment[]
+}
+
+model Loan {
+  id             String        @id @default(cuid())
+  name           String
+  amount         Float
+  amountReturned Float         @default(0)
+  date           DateTime      @default(now())
+  notes          String?
+
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+
+  projectId      String
+  project        Project      @relation(fields: [projectId], references: [id])
+
+  payments       Payment[]     // כל ההחזרים נכנסים פה כ־Payment.kind=REPAYMENT
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  url       String
+  entityId  String   // Payment ID
+  uploadedAt DateTime @default(now())
+  paymentId  String?
+  payment    Payment?  @relation(fields: [paymentId], references: [id])
 }
 
 enum PaymentMethod {
@@ -82,45 +118,13 @@ enum PaymentMethod {
 enum PaymentSource {
   LOAN
   BALANCE
+  INVESTMENT
+  PERSONAL
 }
 
-model Loan {
-  id             String           @id @default(cuid())
-  name           String           
-  amount         Float  
-  date           DateTime         @default(now())
-
-  // Relations
-  userId         String
-  user           User             @relation(fields: [userId], references: [id])
-
-  repayments     LoanRepayment[]
-  @@unique([userId, name])
-}
-
-
-view LoanWithReturned {
-  id             String
-  name           String
-  amount         Float
-  date           DateTime
-  userId         String
-  amountReturned Float
-  amountRemain   Float
-
-  @@map("LoanWithReturned")
-}
-
-model LoanRepayment {
-  id       String   @id @default(cuid())
-  amount   Float
-  date     DateTime @default(now())
-
-  // Relations
-  loanId   String
-  loan     Loan     @relation(fields: [loanId], references: [id])
-
-  userId   String
-  user     User     @relation(fields: [userId], references: [id])
+enum PaymentKind {
+  INCOME     
+  EXPENSE   
+  REPAYMENT  
 }
 
