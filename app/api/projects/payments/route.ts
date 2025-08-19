@@ -1,15 +1,17 @@
 import { PaymentService } from "@/lib/services/paymentService";
 import { catchAsync } from "@/utils/catchAsync";
-import { getUserId } from "@/lib/auth";
+import { withProjectAuth } from "@/utils/withProjectAuth";
 
 // GET /api/projects/[id]/payments
-export const GET = catchAsync(async (req, { params }) => {
-  const userId = await getUserId();
-  return PaymentService.list(req, params.id);
-});
+export const GET = catchAsync(
+  withProjectAuth(async (req, userId, context, projectId) => {
+    return PaymentService.list(req, userId, projectId);
+  })
+);
 
 // POST /api/projects/[id]/payments
-export const POST = catchAsync(async (req, { params }) => {
-  const userId = await getUserId();
-  return PaymentService.createPayment(req, params.id);
-});
+export const POST = catchAsync(
+  withProjectAuth(async (req, userId, context, projectId) => {
+    return PaymentService.createPayment(req, userId, projectId);
+  })
+);

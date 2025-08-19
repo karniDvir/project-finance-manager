@@ -1,19 +1,23 @@
 import { prisma } from "@/lib/prisma";
-import { getUserId } from "@/lib/auth";
 import { AppError } from "@/utils/AppError";
 import { z } from "zod";
 import { buildQuery } from "@/utils/queryBuilder";
 
 type PrismaModel = keyof typeof prisma;
 
+/**
+ * Generic CRUD factory
+ * - Authorization (userId + projectId) is already guaranteed by middleware
+ * - Services stay clean: only business logic here
+ */
 export function createCrudHandlers<T extends z.ZodObject<any>>(
   model: PrismaModel,
   schema: T,
   requireProjectId: boolean = false
 ) {
   return {
-    async list(req: Request, projectId?: string) {
-      const userId = await getUserId();
+    // List items with query filters
+    async list(req: Request, userId: string, projectId?: string) {
       const { searchParams } = new URL(req.url);
       const query = Object.fromEntries(searchParams.entries());
 
@@ -28,18 +32,20 @@ export function createCrudHandlers<T extends z.ZodObject<any>>(
       return (prisma[model] as any).findMany({ where, orderBy });
     },
 
-    async create(req: Request, projectId?: string) {
-      const userId = await getUserId();
+    // Create item
+    async create(req: Request, userId: string, projectId?: string) {
       const body = await req.json();
-      const data = schema.parse(requireProjectId ? { ...body, projectId } : body);
+      const data = schema.parse(
+        requireProjectId ? { ...body, projectId } : body
+      );
 
       return (prisma[model] as any).create({
         data: { ...data, userId },
       });
     },
 
-    async getById(id: string, projectId?: string) {
-      const userId = await getUserId();
+    // Get by ID
+    async getById(id: string, userId: string, projectId?: string) {
       const where: any = { id, userId };
       if (requireProjectId) {
         if (!projectId) throw new AppError("projectId is required", 400);
@@ -51,8 +57,8 @@ export function createCrudHandlers<T extends z.ZodObject<any>>(
       return item;
     },
 
-    async update(id: string, req: Request, projectId?: string) {
-      const userId = await getUserId();
+    // Update item
+    async update(id: string, req: Request, userId: string, projectId?: string) {
       const body = await req.json();
       const data = (schema.partial() as any).parse(
         requireProjectId ? { ...body, projectId } : body
@@ -72,8 +78,8 @@ export function createCrudHandlers<T extends z.ZodObject<any>>(
       }
     },
 
-    async remove(id: string, projectId?: string) {
-      const userId = await getUserId();
+    // Delete item
+    async remove(id: string, userId: string, projectId?: string) {
       const where: any = { id, userId };
       if (requireProjectId) {
         if (!projectId) throw new AppError("projectId is required", 400);

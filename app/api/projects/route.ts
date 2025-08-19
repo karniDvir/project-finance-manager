@@ -1,13 +1,15 @@
 import { ProjectService } from "@/lib/services/projectService";
 import { catchAsync } from "@/utils/catchAsync";
-import { getUserId } from "@/lib/auth";
+import { withAuth } from "@/utils/withAuth";
 
 // GET /api/projects
-export const GET = catchAsync(async (req) => {
-  return ProjectService.list(req);
-});
+export const GET = catchAsync(
+  withAuth(async(req, userId) => {
+  return ProjectService.list(req, userId);
+}));
 
 // POST /api/projects
-export const POST = catchAsync(async (req) => {
-  return ProjectService.create(req);
-});
+export const POST = catchAsync(
+  withAuth(async(req, userId) => {
+  return ProjectService.create(req, userId);
+}));

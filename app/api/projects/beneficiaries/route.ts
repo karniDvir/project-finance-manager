@@ -1,13 +1,17 @@
 import { BeneficiaryService } from "@/lib/services/beneficiaryService";
 import { catchAsync } from "@/utils/catchAsync";
-import { getUserId } from "@/lib/auth";
+import { withProjectAuth } from "@/utils/withProjectAuth";
 
-// GET /api/projects/[id]/beneficiaries
-export const GET = catchAsync(async (req, { params }) => {
-  return BeneficiaryService.list(req, params.id);
-});
+// GET /api/projects/[projectId]/beneficiaries
+export const GET = catchAsync(
+  withProjectAuth(async (req, userId, context, projectId) => {
+    return BeneficiaryService.list(req, userId, projectId);
+  })
+);
 
-// POST /api/projects/[id]/beneficiaries
-export const POST = catchAsync(async (req, { params }) => {
-  return BeneficiaryService.create(req, params.id);
-});
+// POST /api/projects/[projectId]/beneficiaries
+export const POST = catchAsync(
+  withProjectAuth(async (req, userId, context, projectId) => {
+    return BeneficiaryService.create(req, userId, projectId);
+  })
+);

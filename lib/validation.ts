@@ -34,7 +34,6 @@ export const paymentSourceSchema = z.enum([
   "LOAN",
   "BALANCE",
   "INVESTMENT",
-  "PERSONAL",
 ]);
 export const paymentKindSchema = z.enum(["INCOME", "EXPENSE", "REPAYMENT"]);
 
@@ -42,22 +41,6 @@ export const paymentKindSchema = z.enum(["INCOME", "EXPENSE", "REPAYMENT"]);
 export const paymentTypeSchema = z.object({
   method: paymentMethodSchema,
   source: paymentSourceSchema,
-});
-
-// 🔹 Payment
-export const paymentSchema = z.object({
-  amount: z.number().positive("Amount must be positive"),
-  kind: paymentKindSchema,
-  date: z.string().datetime().optional(),         // תאריך פעולה (נוצר אוטומטי אם לא נשלח)
-  effectiveDate: z.string().datetime().optional(), // תאריך ידני
-  notes: z.string().optional(),
-  receipt: z.string().optional(),
-
-  beneficiaryId: z.string().cuid().optional(),
-  userId: z.string().cuid(),
-  projectId: projectIdField,
-  paymentTypeId: z.string().cuid(),
-  loanId: z.string().cuid().optional(),
 });
 
 // 🔹 Loan

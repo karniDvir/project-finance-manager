@@ -2,10 +2,13 @@
 CREATE TYPE "public"."PaymentMethod" AS ENUM ('CASH', 'TRANSACTION', 'CREDIT');
 
 -- CreateEnum
-CREATE TYPE "public"."PaymentSource" AS ENUM ('LOAN', 'BALANCE', 'INVESTMENT', 'PERSONAL');
+CREATE TYPE "public"."PaymentSource" AS ENUM ('LOAN', 'BALANCE', 'INVESTMENT');
 
 -- CreateEnum
 CREATE TYPE "public"."PaymentKind" AS ENUM ('INCOME', 'EXPENSE', 'REPAYMENT');
+
+-- CreateEnum
+CREATE TYPE "public"."LoanType" AS ENUM ('LOAN', 'INVESTMENT');
 
 -- CreateTable
 CREATE TABLE "public"."User" (
@@ -23,6 +26,7 @@ CREATE TABLE "public"."Project" (
     "name" TEXT NOT NULL,
     "description" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "budget" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
@@ -35,7 +39,7 @@ CREATE TABLE "public"."Beneficiary" (
     "reason" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userId" TEXT NOT NULL,
-    "projectId" TEXT,
+    "projectId" TEXT NOT NULL,
 
     CONSTRAINT "Beneficiary_pkey" PRIMARY KEY ("id")
 );
@@ -45,26 +49,19 @@ CREATE TABLE "public"."Payment" (
     "id" TEXT NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
     "kind" "public"."PaymentKind" NOT NULL,
+    "source" "public"."PaymentSource" NOT NULL,
+    "method" "public"."PaymentMethod",
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "effectiveDate" TIMESTAMP(3),
     "notes" TEXT,
     "receipt" TEXT,
     "beneficiaryId" TEXT,
+    "loanTargetId" TEXT,
     "userId" TEXT NOT NULL,
-    "projectId" TEXT,
-    "paymentTypeId" TEXT NOT NULL,
-    "loanId" TEXT,
+    "projectId" TEXT NOT NULL,
+    "loanSourceId" TEXT,
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "public"."PaymentType" (
-    "id" TEXT NOT NULL,
-    "method" "public"."PaymentMethod" NOT NULL,
-    "source" "public"."PaymentSource" NOT NULL,
-
-    CONSTRAINT "PaymentType_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -75,8 +72,9 @@ CREATE TABLE "public"."Loan" (
     "amountReturned" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "notes" TEXT,
+    "type" "public"."LoanType" NOT NULL DEFAULT 'LOAN',
     "userId" TEXT NOT NULL,
-    "projectId" TEXT,
+    "projectId" TEXT NOT NULL,
 
     CONSTRAINT "Loan_pkey" PRIMARY KEY ("id")
 );
@@ -102,28 +100,28 @@ ALTER TABLE "public"."Project" ADD CONSTRAINT "Project_userId_fkey" FOREIGN KEY 
 ALTER TABLE "public"."Beneficiary" ADD CONSTRAINT "Beneficiary_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Beneficiary" ADD CONSTRAINT "Beneficiary_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "public"."Project"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "public"."Beneficiary" ADD CONSTRAINT "Beneficiary_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "public"."Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Payment" ADD CONSTRAINT "Payment_beneficiaryId_fkey" FOREIGN KEY ("beneficiaryId") REFERENCES "public"."Beneficiary"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "public"."Payment" ADD CONSTRAINT "Payment_loanTargetId_fkey" FOREIGN KEY ("loanTargetId") REFERENCES "public"."Loan"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "public"."Payment" ADD CONSTRAINT "Payment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Payment" ADD CONSTRAINT "Payment_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "public"."Project"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "public"."Payment" ADD CONSTRAINT "Payment_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "public"."Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Payment" ADD CONSTRAINT "Payment_paymentTypeId_fkey" FOREIGN KEY ("paymentTypeId") REFERENCES "public"."PaymentType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."Payment" ADD CONSTRAINT "Payment_loanId_fkey" FOREIGN KEY ("loanId") REFERENCES "public"."Loan"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "public"."Payment" ADD CONSTRAINT "Payment_loanSourceId_fkey" FOREIGN KEY ("loanSourceId") REFERENCES "public"."Loan"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Loan" ADD CONSTRAINT "Loan_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Loan" ADD CONSTRAINT "Loan_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "public"."Project"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "public"."Loan" ADD CONSTRAINT "Loan_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "public"."Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Attachment" ADD CONSTRAINT "Attachment_paymentId_fkey" FOREIGN KEY ("paymentId") REFERENCES "public"."Payment"("id") ON DELETE SET NULL ON UPDATE CASCADE;

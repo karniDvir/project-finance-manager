@@ -1,18 +1,24 @@
 import { PaymentService } from "@/lib/services/paymentService";
 import { catchAsync } from "@/utils/catchAsync";
-import { getUserId } from "@/lib/auth";
+import { withProjectAuth } from "@/utils/withProjectAuth";
 
 // GET /api/projects/[id]/payments/[paymentId]
-export const GET = catchAsync(async (req, { params }) => {
-  return PaymentService.getById(params.paymentId, params.id);
-});
+export const GET = catchAsync(
+  withProjectAuth(async (req, userId, context, projectId) => {
+    return PaymentService.getById(context.params.paymentId, projectId);
+  })
+);
 
 // PUT /api/projects/[id]/payments/[paymentId]
-export const PUT = catchAsync(async (req, { params }) => {
-  return PaymentService.update(params.paymentId, req, params.id);
-});
+export const PUT = catchAsync(
+  withProjectAuth(async (req, userId, context, projectId) => {
+    return PaymentService.updatePayment(req,userId,projectId,context.params.paymentId);
+  })
+);
 
 // DELETE /api/projects/[id]/payments/[paymentId]
-export const DELETE = catchAsync(async (req, { params }) => {
-  return PaymentService.remove(params.paymentId, params.id);
-});
+export const DELETE = catchAsync(
+  withProjectAuth(async (req, userId, context, projectId) => {
+    return PaymentService.remove(context.params.paymentId, projectId);
+  })
+);

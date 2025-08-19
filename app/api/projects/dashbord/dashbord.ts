@@ -1,9 +1,10 @@
-import { ProjectService } from "@/lib/services/projectService";
 import { catchAsync } from "@/utils/catchAsync";
-import { getUserId } from "@/lib/auth";
+import { withProjectAuth } from "@/utils/withProjectAuth";
+import { ProjectDashboardService } from "@/lib/services/projectDashbordService";
 
 // GET /api/projects/[id]/dashboard
-export const GET = catchAsync(async (req, { params }) => {
-  const userId = await getUserId();
-  return ProjectService.getDashboard(params.id, userId);
-});
+export const GET = catchAsync(
+  withProjectAuth(async (req, userId, context, projectId) => {
+    return ProjectDashboardService.getDashboard(projectId, userId);
+  })
+);

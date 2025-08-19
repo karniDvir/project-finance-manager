@@ -8,7 +8,7 @@ export const LoanService = {
   ...base,
 
   // Custom: list loans with remaining balance
-  async getLoansWithBalance(projectId: string, userId: string) {
+  async getLoansWithBalance(req : Request, projectId: string, userId: string) {
     const loans = await prisma.loan.findMany({
       where: { projectId, userId },
       include: { payments: true },
