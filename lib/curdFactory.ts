@@ -3,7 +3,8 @@ import { AppError } from "@/utils/AppError";
 import { z } from "zod";
 import { buildQuery } from "@/utils/queryBuilder";
 
-type PrismaModel = keyof typeof prisma;
+type PrismaModel = "user" | "project" | "beneficiary" | "payment" | "loan" | "attachment";
+
 
 /**
  * Generic CRUD factory
@@ -17,11 +18,11 @@ export function createCrudHandlers<T extends z.ZodObject<any>>(
 ) {
   return {
     // List items with query filters
-    async list(req: Request, userId: string, projectId?: string) {
+    async list(req: Request, userId: string, projectId?: string,) {
       const { searchParams } = new URL(req.url);
       const query = Object.fromEntries(searchParams.entries());
 
-      const { where: filters, orderBy } = buildQuery(query);
+      const { where: filters, orderBy } = buildQuery(query, model);
 
       const where: any = { userId, ...filters };
       if (requireProjectId) {

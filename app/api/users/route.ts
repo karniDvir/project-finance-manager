@@ -8,7 +8,7 @@ export const GET = catchAsync(
   withAuthAdmin(async (req) =>{
   const { searchParams } = new URL(req.url);
   const query = Object.fromEntries(searchParams.entries());
-  const { where: filters, orderBy } = buildQuery(query);
+  const { where: filters, orderBy } = buildQuery(query, 'user');
 
   const users : any =  prisma.user.findMany({
     where: filters,

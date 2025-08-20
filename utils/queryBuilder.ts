@@ -1,7 +1,7 @@
 // utils/queryBuilder.ts
 import { querySchema } from "@/lib/validation";
 
-export function buildQuery(query: any) {
+export function buildQuery(query: any, model: "user" | "project" | "beneficiary" | "payment" | "loan" | "attachment") {
   const parsed = querySchema.parse(query);
 
   const where: any = {};
@@ -14,7 +14,18 @@ export function buildQuery(query: any) {
     if (parsed.maxAmount) where.amount.lte = parsed.maxAmount;
   }
 
-  const orderBy = { [parsed.sortBy]: parsed.sort };
+  // map "date" → real DB field depending on model
+  const sortMap: Record<string, string> = {
+    user: "createdAt",
+    project: "createdAt",
+    beneficiary: "createdAt",
+    payment: "date",
+    loan: "date",
+  };
+
+  const field = parsed.sortBy === "date" ? sortMap[model] : parsed.sortBy;
+
+  const orderBy = { [field]: parsed.sort };
 
   return { where, orderBy };
 }
