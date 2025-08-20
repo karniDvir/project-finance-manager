@@ -36,8 +36,10 @@ export function createCrudHandlers<T extends z.ZodObject<any>>(
     // Create item
     async create(req: Request, userId: string, projectId?: string) {
       const body = await req.json();
+      delete body.userId;
+      delete body.projectId;
       const data = schema.parse(
-        requireProjectId ? { ...body, projectId } : body
+        requireProjectId ? { ...body, userId, projectId } : {...body, userId}
       );
 
       return (prisma[model] as any).create({
@@ -61,8 +63,10 @@ export function createCrudHandlers<T extends z.ZodObject<any>>(
     // Update item
     async update(id: string, req: Request, userId: string, projectId?: string) {
       const body = await req.json();
+      delete body.userId;
+      delete body.projectId;
       const data = (schema.partial() as any).parse(
-        requireProjectId ? { ...body, projectId } : body
+        requireProjectId ? { ...body, userId, projectId } : {...body, userId}
       );
 
       const where: any = { id, userId };

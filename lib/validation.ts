@@ -18,6 +18,7 @@ export const userSchema = z.object({
 export const projectSchema = z.object({
   name: z.string().min(1, "Project name is required"),
   description: z.string().optional(),
+  budget: z.float32().optional(),
   userId: z.string().cuid(),
 });
 
@@ -25,11 +26,11 @@ export const projectSchema = z.object({
 export const beneficiarySchema = z.object({
   name: z.string().min(1, "Beneficiary name is required"),
   reason: z.string().optional(),
+  projectId: projectIdField,
   userId: z.string().cuid(),
-  projectId: projectIdField
 });
 
-// 🔹 Enums (לפי Prisma)
+// 🔹 Enums 
 export const paymentMethodSchema = z.enum(["CASH", "TRANSACTION", "CREDIT"]);
 export const paymentSourceSchema = z.enum([
   "LOAN",
@@ -50,8 +51,8 @@ export const loanSchema = z.object({
   amount: z.number().positive("Loan amount must be positive"),
   date: z.string().datetime().optional(),
   notes: z.string().optional(),
-  userId: z.string().cuid(),
   projectId: projectIdField,
+  userId: z.string().cuid(),
 });
 
 // 🔹 Attachment
@@ -60,9 +61,10 @@ export const attachmentSchema = z.object({
   entityId: z.string().cuid(),
   uploadedAt: z.string().datetime().optional(),
   paymentId: z.string().cuid().optional(),
+  userId: z.string().cuid(),
 });
 
-// 🔹 Query params (לסינון)
+// 🔹 Query params
 export const querySchema = z.object({
   minAmount: z.coerce.number().positive().optional(),
   maxAmount: z.coerce.number().positive().optional(),
