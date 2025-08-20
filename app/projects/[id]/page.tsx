@@ -204,7 +204,10 @@ export default function ProjectDetailPage() {
         {/* Action buttons */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Income */}
-          <button className="group bg-white/5 backdrop-blur-xl border border-white/10 p-6 hover:bg-green-500/10 hover:border-green-500/30 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20 hover:scale-105">
+          <button 
+            onClick={() => router.push(`/projects/${projectId}/actions/income`)}
+            className="group bg-white/5 backdrop-blur-xl border border-white/10 p-6 hover:bg-green-500/10 hover:border-green-500/30 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20 hover:scale-105"
+          >
             <div className="flex items-center justify-center mb-4">
               <div className="w-16 h-16 bg-gradient-to-br from-green-500/20 to-emerald-600/20 border border-green-500/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

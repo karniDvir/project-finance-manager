@@ -22,7 +22,6 @@ export default function ProjectsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [newProjectDescription, setNewProjectDescription] = useState("");
-  const [newProjectBudget, setNewProjectBudget] = useState("");
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
@@ -61,7 +60,6 @@ export default function ProjectsPage() {
         body: JSON.stringify({
           name: newProjectName.trim(),
           description: newProjectDescription.trim() || undefined,
-          budget: newProjectBudget ? parseFloat(newProjectBudget) : 0,
         }),
       });
 
@@ -70,7 +68,6 @@ export default function ProjectsPage() {
         setProjects([...projects, newProject]);
         setNewProjectName("");
         setNewProjectDescription("");
-        setNewProjectBudget("");
         setShowCreateModal(false);
         // Automatically open the new project
         router.push(`/projects/${newProject.id}`);
@@ -184,7 +181,6 @@ export default function ProjectsPage() {
           setShowCreateModal(false);
           setNewProjectName("");
           setNewProjectDescription("");
-          setNewProjectBudget("");
         }}
         title="Create New Project"
       >
@@ -216,20 +212,6 @@ export default function ProjectsPage() {
             />
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Budget
-            </label>
-            <input
-              type="number"
-              value={newProjectBudget}
-              onChange={(e) => setNewProjectBudget(e.target.value)}
-              placeholder="Enter budget amount..."
-              min="0"
-              step="0.01"
-              className="w-full bg-white/5 border border-white/20 text-white placeholder-slate-400 px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors duration-200"
-            />
-          </div>
         </div>
 
         <div className="flex gap-3 mt-8">
@@ -238,7 +220,6 @@ export default function ProjectsPage() {
               setShowCreateModal(false);
               setNewProjectName("");
               setNewProjectDescription("");
-              setNewProjectBudget("");
             }}
             className="flex-1 bg-white/5 border border-white/20 text-white py-3 px-4 hover:bg-white/10 transition-all duration-200"
             disabled={creating}
