@@ -13,7 +13,7 @@ export const SourceFlowService = {
 
     const payments = await prisma.payment.findMany({
       where,
-      include: { beneficiary: true, loanTarget: true },
+      include: { beneficiary: true, loanTarget: true }, // adding the object taget to the 
     });
 
     const totals = payments.reduce(

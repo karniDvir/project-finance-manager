@@ -11,11 +11,11 @@ export const LoanService = {
   async getLoansWithBalance(req : Request, projectId: string, userId: string) {
     const loans = await prisma.loan.findMany({
       where: { projectId, userId },
-      include: { payments: true },
+      include: { paymentsAsSource: true , paymentsAsTarget: true},
     });
 
     return loans.map(l => {
-      const returned = l.payments.filter(p => p.kind === "REPAYMENT")
+      const returned = l.paymentsAsSource.filter(p => p.kind === "REPAYMENT")
         .reduce((s, p) => s + p.amount, 0);
       return { ...l, returned, remaining: l.amount - returned };
     });

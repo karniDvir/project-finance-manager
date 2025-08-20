@@ -30,7 +30,9 @@ export const authOptions: NextAuthOptions = {
       const existingUser = await prisma.user.findUnique({
         where: { email: user.email },
       }); 
-
+      user.role = 'USER'
+      if(user.email === process.env.ADMIN_USER)
+        user.role = 'ADMIN'
       // Create new user if not exists
       if (!existingUser) {
         await prisma.user.create({
@@ -38,6 +40,7 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             name: user.name,
             image: user.image,
+            role: user.role
           },
         });
       }
@@ -55,17 +58,19 @@ export const authOptions: NextAuthOptions = {
         if(!dbUser)
             throw new  Error(`User not found in database for email: ${user.email}`);
         token.id = dbUser.id; // attach database id to the JWT
+        token.role = dbUser.role;
       }
       return token;
     },
 
     /** 3️⃣ Runs whenever session is checked on client */
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id; // attach DB id to session.user
-      }
-      return session;
-    },
+  if (session.user) {
+    session.user.id = token.id;
+    session.user.role = token.role; // ✅ add role to session
+  }
+  return session;
+}
   },
   pages: {
     signIn: "/auth/signin",

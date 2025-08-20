@@ -8,9 +8,10 @@ export const projectIdField = z.string().cuid("Invalid project ID");
 
 // 🔹 User
 export const userSchema = z.object({
-  name: z.string().min(1).optional(),
-  email: z.string().email().optional(),
+  name: z.string().min(1),
+  email: z.string().email(),
   image: z.string().url().optional(),
+  role: z.string(),
 });
 
 // 🔹 Project

@@ -14,8 +14,9 @@ CREATE TYPE "public"."LoanType" AS ENUM ('LOAN', 'INVESTMENT');
 CREATE TABLE "public"."User" (
     "id" TEXT NOT NULL,
     "name" TEXT,
-    "email" TEXT,
+    "email" TEXT NOT NULL,
     "image" TEXT,
+    "role" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
