@@ -40,7 +40,6 @@ export function createCrudHandlers<T extends z.ZodObject<any>>(
       const data = schema.parse(
         requireProjectId ? { ...body, userId, projectId } : {...body, userId}
       );
-
       return (prisma[model] as any).create({
         data: { ...data, userId },
       });

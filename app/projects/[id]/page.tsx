@@ -220,7 +220,9 @@ export default function ProjectDetailPage() {
           </button>
 
           {/* Expense */}
-          <button className="group bg-white/5 backdrop-blur-xl border border-white/10 p-6 hover:bg-red-500/10 hover:border-red-500/30 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20 hover:scale-105">
+          <button 
+          onClick={() => router.push(`/projects/${projectId}/actions/expense`)}
+          className="group bg-white/5 backdrop-blur-xl border border-white/10 p-6 hover:bg-red-500/10 hover:border-red-500/30 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20 hover:scale-105">
             <div className="flex items-center justify-center mb-4">
               <div className="w-16 h-16 bg-gradient-to-br from-red-500/20 to-pink-600/20 border border-red-500/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
