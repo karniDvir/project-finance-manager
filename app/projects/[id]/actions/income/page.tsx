@@ -50,7 +50,7 @@ export default function IncomePage() {
     setSubmitting(true);
     try {
       const response = await fetch(`/api/projects/${projectId}/payments`, {
-        method: "POST",
+        method: formData.method,
         headers: {
           "Content-Type": "application/json",
         },

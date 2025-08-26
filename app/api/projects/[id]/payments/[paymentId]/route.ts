@@ -5,6 +5,7 @@ import { withProjectAuth } from "@/utils/withProjectAuth";
 // GET /api/projects/[id]/payments/[paymentId]
 export const GET = catchAsync(
   withProjectAuth(async (req, userId, context, projectId) => {
+    console.log(projectId)
     return PaymentService.getById(context.params.paymentId, projectId);
   })
 );

@@ -5,16 +5,16 @@ export const basePaymentSchema = z.object({
   amount: z.number().positive(),
   kind: z.enum(["INCOME", "EXPENSE", "REPAYMENT"]),
   source: z.enum(["LOAN", "BALANCE", "INVESTMENT"]),
-  beneficiaryId: z.string().uuid().optional(),
-  loanSourceId: z.string().uuid().optional(),
-  loanTargetId: z.string().uuid().optional(),
+  beneficiaryId: z.string().cuid().optional(),
+  loanSourceId: z.string().cuid().optional(),
+  loanTargetId: z.string().cuid().optional(),
 });
 //request with source = LOAN // INVESMENT must have body.loanSourceId 
 
 // EXPENSE
 export const expenseSchema = basePaymentSchema.extend({
   kind: z.literal("EXPENSE"),
-  beneficiaryId: z.string().uuid(),
+  beneficiaryId: z.string().cuid(),
 }).superRefine((data, ctx) => {
   if ((data.source === "LOAN" || data.source === "INVESTMENT") && !data.loanSourceId) {
     ctx.addIssue({
@@ -41,7 +41,7 @@ export const incomeSchema = basePaymentSchema.extend({
 // REPAYMENT
 export const repaymentSchema = basePaymentSchema.extend({
   kind: z.literal("REPAYMENT"),
-  loanTargetId: z.string().uuid(),
+  loanTargetId: z.string().cuid(),
 }).superRefine((data, ctx) => {
   if (data.source !== "BALANCE") {
     ctx.addIssue({

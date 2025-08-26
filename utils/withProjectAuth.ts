@@ -10,8 +10,7 @@ export function withProjectAuth(
 ) {
   return async (req: Request, context: any) => {
     const userId = await getUserId();
-    const { projectId } = context.params;
-
+    const projectId = await context.params.id;
     // Ensure the project exists and belongs to this user
     const project = await prisma.project.findFirst({
       where: { id: projectId, userId },

@@ -21,7 +21,6 @@ export function createCrudHandlers<T extends z.ZodObject<any>>(
     async list(req: Request, userId: string, projectId?: string,) {
       const { searchParams } = new URL(req.url);
       const query = Object.fromEntries(searchParams.entries());
-
       const { where: filters, orderBy } = buildQuery(query, model);
 
       const where: any = { userId, ...filters };

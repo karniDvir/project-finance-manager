@@ -5,7 +5,7 @@ import { withProjectAuth } from "@/utils/withProjectAuth";
 // GET /api/projects/[projectId]/loans
 export const GET = catchAsync(
   withProjectAuth(async (req, userId, context, projectId) => {
-    return LoanService.getLoansWithBalance(req, userId, projectId);
+    return LoanService.list(req, userId, projectId);
   })
 );
 

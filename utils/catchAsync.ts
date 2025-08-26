@@ -10,6 +10,7 @@ export function catchAsync(handler: (...args: any[]) => Promise<any>) {
       return NextResponse.json(result);
     } catch (err: any) {
       if (err instanceof ZodError) {
+        console.log(err);
         return NextResponse.json(
           { error: "Validation failed", details: err},
           { status: 400 }
@@ -17,6 +18,7 @@ export function catchAsync(handler: (...args: any[]) => Promise<any>) {
       }
 
       if (err instanceof AppError) {
+        console.log(err);
         return NextResponse.json(
           { error: err.message },
           { status: err.statusCode }

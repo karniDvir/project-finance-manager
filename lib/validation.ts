@@ -51,6 +51,7 @@ export const loanSchema = z.object({
   amount: z.number().positive("Loan amount must be positive"),
   date: z.string().datetime().optional(),
   notes: z.string().optional(),
+  type: z.enum(["LOAN", "INVESTMENT"]).optional(),
   projectId: projectIdField,
   userId: z.string().cuid(),
 });
@@ -70,5 +71,6 @@ export const querySchema = z.object({
   maxAmount: z.coerce.number().positive().optional(),
   name: z.string().optional(),
   sortBy: z.enum(["date", "amount"]).default("date"),
+  type: z.enum(["LOAN", "INVESTMENT"]).optional(),
   sort: z.enum(["asc", "desc"]).default("desc"),
 });

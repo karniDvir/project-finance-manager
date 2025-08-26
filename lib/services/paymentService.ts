@@ -11,8 +11,9 @@ export const PaymentService = {
   //json with source = LOAN // INVESMENT must have loanSourceId 
   async createPayment(req: Request, userId: string, projectId: string) {
     const body = await req.json();
+    console.log(body);
     const data = validatePaymentByKind({ ...body, projectId });
-
+    console.log(data)
     return prisma.payment.create({
       data: { userId, projectId, ...data },
     });
@@ -32,7 +33,7 @@ export const PaymentService = {
   async listByRelation(req: Request, userId: string, projectId: string, relation: "beneficiaryId" | "loanSourceId" | "loanTargetId", relationId: string) {
     const { searchParams } = new URL(req.url);
     const query = Object.fromEntries(searchParams.entries());
-    const { where: filters, orderBy } = buildQuery(query);
+    const { where: filters, orderBy } = buildQuery(query, 'payment');
 
     return prisma.payment.findMany({
       where: { userId, projectId, [relation]: relationId, ...filters },
