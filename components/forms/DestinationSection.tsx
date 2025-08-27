@@ -12,8 +12,8 @@ interface DestinationSectionProps {
   projectId: string;
   value: string;
   onValueChange: (val: string) => void;
-  entityId: string | null;
-  onEntityIdChange: (id: string | null) => void;
+  entityId: string | undefined;
+  onEntityIdChange: (id: string | undefined) => void;
   onMethodChange: (method: "POST" | "PUT") => void;
   mode : "NEW" | "EXISTING"
   onModeChange: (mode :"NEW" | "EXISTING") => void;

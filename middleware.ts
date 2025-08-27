@@ -8,7 +8,6 @@ export default withAuth({
   callbacks: {
     // Optional: custom authorization logic
     authorized: ({ token }) => {
-        console.log(token?.email)
       // `token` is your JWT from callbacks.jwt()
       return !!token // only allow if user has a token
     },

@@ -16,20 +16,29 @@ export function createCrudHandlers<T extends z.ZodObject<any>>(
   schema: T,
   requireProjectId: boolean = false
 ) {
-  return {
+  return {  
     // List items with query filters
     async list(req: Request, userId: string, projectId?: string,) {
       const { searchParams } = new URL(req.url);
       const query = Object.fromEntries(searchParams.entries());
-      const { where: filters, orderBy } = buildQuery(query, model);
+      const { where: filters, orderBy, take, skip } = buildQuery(query, model);
 
       const where: any = { userId, ...filters };
       if (requireProjectId) {
         if (!projectId) throw new AppError("projectId is required", 400);
         where.projectId = projectId;
       }
+      const includeByModel: Partial<Record<typeof model, any>> = {
+      payment: {
+        beneficiary: { select: { id: true, name: true , reason: true} },
+        loanTarget: { select: { id: true, name: true } },
+        loanSource: { select: { id: true, name: true } },
+        project: { select: { id: true } }, // useful for building links
+      }}
+      
+      const include = includeByModel[model as "payment"] || undefined;
 
-      return (prisma[model] as any).findMany({ where, orderBy });
+      return (prisma[model] as any).findMany({ where, orderBy, take, skip, include });
     },
 
     // Create item

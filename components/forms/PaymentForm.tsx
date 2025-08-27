@@ -15,10 +15,10 @@ export interface PaymentFormData {
   kind: "INCOME" | "EXPENSE" | "REPAYMENT";
   source: "BALANCE" | "LOAN" | "INVESTMENT";
   dest?: "LOAN" | "BENEFICIARIES"
-  sourceId: string | null;
+  loanSourceId: string | undefined;
   sourceName: string;
   method: "POST" | "PUT";
-  destinationId?: string | null;
+  destinationId?: string | undefined;
   destinationName?: string;
 
   amount: number;
@@ -55,10 +55,10 @@ export default function PaymentForm({
 }: PaymentFormProps) {
   const config = paymentConfig[kind];
 
-  const [sourceId, setSourceId] = useState<string | null>(null);
+  const [loanSourceId, setSourceId] = useState<string | undefined>(undefined);
   const [sourceName, setSourceName] = useState("");
 
-  const [destId, setDestId] = useState<string | null>(null);
+  const [destId, setDestId] = useState<string | undefined>(undefined);
   const [destName, setDestName] = useState("");
 
   const [amount, setAmount] = useState("");
@@ -101,7 +101,7 @@ export default function PaymentForm({
     const data: PaymentFormData = {
       kind,
       source,
-      sourceId,
+      loanSourceId,
       sourceName,
       destinationId: destId,
       destinationName: destName,
@@ -127,11 +127,10 @@ export default function PaymentForm({
             entityData.notes = notes;
         }
     const entityId = await createNewEntity(entityData);
-    console.log(entityData);
       if(!entityId)
         throw new Error("cannot fetch")
 
-    kind === 'EXPENSE' ? data.destinationId = entityId : data.sourceId = entityId;  
+    kind === 'EXPENSE' ? data.destinationId = entityId : data.loanSourceId = entityId;  
 
     }
     await onSubmit(data);
@@ -168,7 +167,7 @@ export default function PaymentForm({
           projectId={projectId}
           value={sourceName}
           onValueChange={setSourceName}
-          entityId={sourceId}
+          entityId={loanSourceId}
           onEntityIdChange={setSourceId}
           mode={mode}
           onModeChange={setMode}

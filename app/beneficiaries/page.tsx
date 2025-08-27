@@ -14,7 +14,6 @@ export default function BeneficiariesPage() {
  const fetchBeneficiaries = async () => {
   const res = await fetch(`/api/beneficiaries?sortBy=${sortBy}&sort=${sort}`);
   const data = await res.json();
-  console.log("Fetched beneficiaries:", data);
   setBeneficiaries(Array.isArray(data) ? data : []);
   
 };

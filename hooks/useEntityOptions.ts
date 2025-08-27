@@ -31,7 +31,6 @@ export function useEntityOptions({ projectId, type, enabled = true }: UseEntityO
             : `${type.toLowerCase()}`;
 
         const api = `/api/projects/${projectId}/${query}`;
-        console.log(api);
         const res = await fetch(api);
         if (res.ok) {
           const data = await res.json();

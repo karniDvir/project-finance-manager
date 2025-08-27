@@ -7,13 +7,9 @@ const base = createCrudHandlers("payment", basePaymentSchema, true);
 
 export const PaymentService = {
   ...base,
-
-  //json with source = LOAN // INVESMENT must have loanSourceId 
   async createPayment(req: Request, userId: string, projectId: string) {
     const body = await req.json();
-    console.log(body);
     const data = validatePaymentByKind({ ...body, projectId });
-    console.log(data)
     return prisma.payment.create({
       data: { userId, projectId, ...data },
     });

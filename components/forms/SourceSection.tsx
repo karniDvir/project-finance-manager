@@ -12,8 +12,8 @@ interface SourceSectionProps {
   projectId: string;
   value: string;
   onValueChange: (val: string) => void;
-  entityId: string | null;
-  onEntityIdChange: (id: string | null) => void;
+  entityId: string | undefined;
+  onEntityIdChange: (id: string | undefined) => void;
   mode : "NEW" | "EXISTING";
   onModeChange: (mode :"NEW" | "EXISTING") => void;
  source : "BALANCE" | "LOAN" | "INVESTMENT"
@@ -43,7 +43,7 @@ export function SourceSection({
 
   useEffect(() => {
     if (mode === "NEW") {
-      onEntityIdChange(null);
+      onEntityIdChange(undefined);
     }
   }, [mode, onEntityIdChange]);
 

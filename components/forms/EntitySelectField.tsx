@@ -13,8 +13,8 @@ interface EntitySelectFieldProps {
   mode: "NEW" | "EXISTING";
   value: string;
   onValueChange: (val: string) => void;
-  selectedId: string | null;
-  onSelectId: (id: string | null) => void;
+  selectedId: string | undefined;
+  onSelectId: (id: string | undefined) => void;
   options: EntityOption[];
   placeholderNew?: string;
   placeholderExisting?: string;
@@ -47,7 +47,7 @@ export function EntitySelectField({
             onChange={(e) => {
               onValueChange(e.target.value);
               setShowDropdown(true);
-              onSelectId(null); // reset selected
+              onSelectId(undefined); // reset selected
             }}
             onFocus={() => setShowDropdown(true)}
             onBlur={() => setTimeout(() => setShowDropdown(false), 200)}

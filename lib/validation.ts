@@ -71,6 +71,9 @@ export const querySchema = z.object({
   maxAmount: z.coerce.number().positive().optional(),
   name: z.string().optional(),
   sortBy: z.enum(["date", "amount"]).default("date"),
+  kind: z.enum(["INCOME", "EXPENSE", "REPAYMENT"]).optional(),
   type: z.enum(["LOAN", "INVESTMENT"]).optional(),
   sort: z.enum(["asc", "desc"]).default("desc"),
+  take: z.coerce.number().int().positive().max(100).optional(),
+  skip: z.coerce.number().int().nonnegative().optional(),
 });

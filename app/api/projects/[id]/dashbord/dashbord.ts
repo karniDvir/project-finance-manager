@@ -7,7 +7,6 @@ export const GET = catchAsync(
   withProjectAuth(async (req, userId, context, projectId) => {
     
     const data = ProjectDashboardService.getDashboard(projectId, userId);
-    console.log(data)
     return data;
   })
 );
